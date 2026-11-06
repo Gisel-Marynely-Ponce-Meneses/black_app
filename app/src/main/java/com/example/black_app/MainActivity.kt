@@ -42,6 +42,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,7 +57,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.black_app.ui.theme.Black_appTheme
-
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapType
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberMarkerState
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +93,27 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     Black_appTheme {
         Greeting("Android")
+    }
+}
+
+@Composable
+fun MyGoogleMaps() {
+    val marker = LatLng(19.98007, -98.6853)
+    val markerState = rememberMarkerState(position = marker)
+
+    val properties = remember { MapProperties(mapType = MapType.HYBRID) }
+    val uiSettings = remember { MapUiSettings(zoomControlsEnabled = false) }
+
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        properties = properties,
+        uiSettings = uiSettings
+    ) {
+        Marker(
+            state = markerState,
+            title = "UPP",
+            snippet = "Marcador de la práctica 6"
+        )
     }
 }
 
@@ -177,139 +205,149 @@ fun App() {
             }
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(Color(0xFF303030))
-                .padding(12.dp)
-        ) {
-            Column(
+        if (selectedTab == 1) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF424242))
+                    .padding(innerPadding)
             ) {
-                if (selectedTab == 2) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.icono),
-                            contentDescription = "Logo",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.size(240.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = "Gisel Ponce Meneses",
-                            fontSize = 26.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.White,
+                MyGoogleMaps()
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(Color(0xFF303030))
+                    .padding(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color(0xFF424242))
+                ) {
+                    if (selectedTab == 0) {
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp),
-                            textAlign = TextAlign.Start
-                        )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        item {
+                                .fillMaxSize()
+                                .padding(top = 16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono),
                                 contentDescription = "Logo",
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(280.dp)
+                                modifier = Modifier.size(240.dp)
                             )
 
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Greeting(
-                                name = "Android",
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                                    .clickable { counter++ }
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.ic_favorite),
-                                    contentDescription = "Like",
-                                    modifier = Modifier.size(72.dp)
-                                )
-                                Text(
-                                    text = counter.toString(),
-                                    color = Color.White,
-                                    fontSize = 32.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(start = 12.dp)
-                                )
-                            }
+                            Spacer(modifier = Modifier.height(16.dp))
 
                             Text(
                                 text = "Gisel Ponce Meneses",
                                 fontSize = 26.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = FontWeight.Normal,
                                 color = Color.White,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp),
+                                textAlign = TextAlign.Start
                             )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            item {
+                                Image(
+                                    painter = painterResource(id = R.drawable.icono),
+                                    contentDescription = "Logo",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(280.dp)
+                                )
 
-                            Text(
-                                text = "TIID 04_01",
-                                color = Color.White,
-                                fontSize = 15.sp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 4.dp),
-                                textAlign = TextAlign.Center
-                            )
+                                Spacer(modifier = Modifier.height(8.dp))
 
-                            Text(
-                                text = "Aplicaciones móviles",
-                                color = Color.White,
-                                fontSize = 15.sp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 2.dp),
-                                textAlign = TextAlign.Center
-                            )
+                                Greeting(
+                                    name = "Android",
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
 
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 24.dp, vertical = 16.dp)
-                            ) {
-                                Text(text = "Stack:", color = Color.White, fontWeight = FontWeight.Bold)
-                                Text(text = "Java", color = Color.White)
-                                Text(text = "KOTLIN", color = Color.White)
-                            }
-
-                            LazyRow(
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                            ) {
-                                items(tecnologias) { tecnologia ->
-                                    Text(
-                                        text = tecnologia,
-                                        color = Color.White,
-                                        fontSize = 16.sp
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                                        .clickable { counter++ }
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.ic_favorite),
+                                        contentDescription = "Like",
+                                        modifier = Modifier.size(72.dp)
                                     )
+                                    Text(
+                                        text = counter.toString(),
+                                        color = Color.White,
+                                        fontSize = 32.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(start = 12.dp)
+                                    )
+                                }
+
+                                Text(
+                                    text = "Gisel Ponce Meneses",
+                                    fontSize = 26.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Text(
+                                    text = "TIID 04_01",
+                                    color = Color.White,
+                                    fontSize = 15.sp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 4.dp),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Text(
+                                    text = "Aplicaciones móviles",
+                                    color = Color.White,
+                                    fontSize = 15.sp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 2.dp),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                                ) {
+                                    Text(text = "Stack:", color = Color.White, fontWeight = FontWeight.Bold)
+                                    Text(text = "Java", color = Color.White)
+                                    Text(text = "KOTLIN", color = Color.White)
+                                }
+
+                                LazyRow(
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                ) {
+                                    items(tecnologias) { tecnologia ->
+                                        Text(
+                                            text = tecnologia,
+                                            color = Color.White,
+                                            fontSize = 16.sp
+                                        )
+                                    }
                                 }
                             }
                         }
