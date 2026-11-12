@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -45,6 +46,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -63,17 +65,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.black_app.ui.theme.Black_appTheme
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.rememberMarkerState
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,8 +97,13 @@ fun MyGoogleMaps() {
         position = CameraPosition.fromLatLngZoom(marker, 15f)
     }
 
-    val properties = remember { MapProperties(mapType = MapType.HYBRID) }
-    val uiSettings = remember { MapUiSettings(zoomControlsEnabled = false) }
+    val properties = remember {
+        MapProperties(mapType = MapType.HYBRID)
+    }
+
+    val uiSettings = remember {
+        MapUiSettings(zoomControlsEnabled = false)
+    }
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
@@ -117,7 +122,7 @@ fun MyGoogleMaps() {
 @Composable
 fun App() {
     var selectedTab by rememberSaveable { mutableStateOf(2) }
-    var mostrarDialogo by remember { mutableStateOf(false) }
+    var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -127,12 +132,18 @@ fun App() {
                 title = { Text("black_app") },
                 navigationIcon = {
                     IconButton(onClick = { }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menú")
+                        Icon(
+                            Icons.Default.Menu,
+                            contentDescription = "Menú"
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = { }) {
-                        Icon(Icons.Default.Search, contentDescription = "Buscar")
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Buscar"
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -217,26 +228,51 @@ fun App() {
         }
     }
 
-    // Cuadro de diálogo del botón flotante
-    if (mostrarDialogo) {
+    MyDialog(
+        show = mostrarDialogo,
+        onDismiss = {
+            mostrarDialogo = false
+        },
+        onConfirm = {
+            mostrarDialogo = false
+        }
+    )
+}
+
+@Composable
+fun MyDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    if (show) {
         AlertDialog(
             onDismissRequest = {
-                mostrarDialogo = false
-            },
-            title = {
-                Text(text = "Mensaje")
-            },
-            text = {
-                Text(text = "Hola")
+                onDismiss()
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        mostrarDialogo = false
+                        onConfirm()
                     }
                 ) {
-                    Text("Aceptar")
+                    Text(text = "Aceptar")
                 }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        onDismiss()
+                    }
+                ) {
+                    Text(text = "Cancelar")
+                }
+            },
+            title = {
+                Text(text = "Suscríbete")
+            },
+            text = {
+                Text(text = "Esto es el body de mi dialog")
             }
         )
     }
@@ -320,9 +356,23 @@ fun ProfileScreen() {
                     .align(Alignment.TopStart)
                     .padding(16.dp)
             ) {
-                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                    Text("UPP", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    Text("TIID", color = Color.White, fontSize = 18.sp)
+                Column(
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 8.dp
+                    )
+                ) {
+                    Text(
+                        "UPP",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        "TIID",
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
                 }
             }
 
@@ -411,7 +461,12 @@ fun ProfileScreen() {
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1A1A2E)
             )
-            Text(text = "Desliza →", fontSize = 12.sp, color = Color.Gray)
+
+            Text(
+                text = "Desliza →",
+                fontSize = 12.sp,
+                color = Color.Gray
+            )
         }
 
         LazyRow(
@@ -445,11 +500,19 @@ private fun EtiquetaLenguaje(lenguaje: Lenguaje) {
     Surface(
         color = MoradoClaro,
         shape = RoundedCornerShape(50),
-        border = BorderStroke(1.dp, Morado.copy(alpha = 0.3f))
+        border = BorderStroke(
+            1.dp,
+            Morado.copy(alpha = 0.3f)
+        )
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
+            modifier = Modifier.padding(
+                start = 8.dp,
+                end = 16.dp,
+                top = 8.dp,
+                bottom = 8.dp
+            )
         ) {
             if (lenguaje.logo != null) {
                 Image(
